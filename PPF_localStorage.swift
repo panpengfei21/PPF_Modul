@@ -6,8 +6,6 @@
 //  Copyright © 2016年 ZW. All rights reserved.
 //  APP 沙盒的操作
 
-import UIKit
-
 class PPF_localStorage: NSObject {
     // MARK: - 初始化
     private override init() {
@@ -23,13 +21,6 @@ class PPF_localStorage: NSObject {
         super.init()
     }
     
-    /**
-     可以删除
-     */
-    func pri() {
-        print("documents:\(documents)")
-        print("cache:\(caches)")
-    }
    
     // MARK: - property
     /// 单例
@@ -62,7 +53,7 @@ class PPF_localStorage: NSObject {
      - returns: 字符串
      */
     func createUniqueString() -> String {
-        let date = NSDate(timeIntervalSince1970: 0)
+        let date = NSDate(timeIntervalSinceNow: 0)
         return "\(Int(date.timeIntervalSince1970))"
     }
     
@@ -74,7 +65,6 @@ class PPF_localStorage: NSObject {
      - returns: 删除成功:true  失败:false
      */
     func deleteFile(path:String) -> Bool {
-        let fileManager = NSFileManager.defaultManager()
         if fileManager.fileExistsAtPath(path){
             do{
                 try fileManager.removeItemAtPath(path)
@@ -151,41 +141,17 @@ extension PPF_localStorage{
     
     // MARK: - 删除文件夹
     /**
-     删除一个文件
-     
-     - parameter path: 文件路径
-     
-     - returns: 删除是否成功
-     */
-    func deleteFileAtPath(path:String) -> Bool {
-        do{
-            try fileManager.removeItemAtPath(path)
-            return true
-        }catch let error as NSError{
-            print("remove folder path failed:\(error)")
-            return false
-        }
-        
-    }
-    
-    /**
      删除一个文件夹下的全部文件
      
      - parameter path: 文件夹
      */
     func deleteItemInDirectory(path:String) {
-        guard !path.isEmpty else{
+        guard let subPath = subpathInDirectory(path) else{
             return
         }
-        
-        do {
-            let a = try fileManager.subpathsOfDirectoryAtPath(path)
-            for i in a {
-                let subPath = path.stringByAppendingString("/\(i)")
-                deleteFile(subPath)
-            }
-        }catch let error as NSError{
-            print(error)
+        for s in subPath{
+            let s = path.stringByAppendingString("/\(s)")
+            deleteFile(s)
         }
     }
     
@@ -203,10 +169,86 @@ extension PPF_localStorage{
         let e = fileManager.fileExistsAtPath(path, isDirectory: &isDir)
         return e && isDir
     }
+    
+    /**
+     一个文件夹下的全部子文件
+     
+     - parameter dir: 文件夹的路径
+     
+     - returns: 子文件
+     */
+    func subpathInDirectory(dir:String) -> [String]? {
+        guard !dir.isEmpty else{
+            return nil
+        }
+        do{
+            let subP = try fileManager.subpathsOfDirectoryAtPath(dir)
+            return subP
+        }catch let error as NSError{
+            print(error)
+            return nil
+        }
+    }
+}
+
+enum ImageType {
+    case png
+    case jpg
 }
 
 
+// MARK: - 图片
+extension PPF_localStorage{
+    /**
+     保存图片
+     
+     - parameter image: 图片
+     - parameter path:  保存的完整路径
+     - parameter type:  类型 jpg png
+     - parameter cover: 是否覆盖原来数据
+     
+     - returns: 保存是否成功
+     */
+    func saveImage(image:UIImage,atPath path:String,type:ImageType,cover:Bool) -> Bool {
+        guard !path.isEmpty else{
+            return false
+        }
+        
+        var imageData:NSData?
+        switch type {
+        case .png:
+            imageData = UIImagePNGRepresentation(image)
+        case .jpg:
+            
+            imageData = UIImageJPEGRepresentation(image, 0.5)
+        }
+        guard let imageD = imageData else{
+            return false
+        }
 
+        if cover && fileExistsAtPath(path){
+            deleteFile(path)
+        }
+        return imageD.writeToFile(path, atomically: true)
+    }
+    
+    /**
+     生成完整的图片名称(路径),保存在caches/images里
+     
+     - parameter type: 图片类型
+     
+     - returns: 图片路径
+     */
+    func createImageCompletyNameWithType(type:ImageType)->String {
+        let imageName = imagesDirectoryInCaches.stringByAppendingString("/\(createUniqueString())")
+        switch type {
+        case .png:
+            return imageName + ".png"
+        case .jpg:
+            return imageName + ".jpg"
+        }
+    }
+}
 
 
 
