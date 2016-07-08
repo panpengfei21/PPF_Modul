@@ -6,6 +6,9 @@
 //  Copyright © 2016年 ZW. All rights reserved.
 //  APP 沙盒的操作
 
+import Foundation
+import UIKit
+
 class PPF_localStorage: NSObject {
     // MARK: - 初始化
     private override init() {
@@ -191,6 +194,12 @@ extension PPF_localStorage{
     }
 }
 
+/**
+ 图片类型
+ 
+ - png: png
+ - jpg: jpg
+ */
 enum ImageType {
     case png
     case jpg
@@ -233,14 +242,15 @@ extension PPF_localStorage{
     }
     
     /**
-     生成完整的图片名称(路径),保存在caches/images里
+     生成完整的图片名称(路径),保存在/Library/caches/images里
      
      - parameter type: 图片类型
      
      - returns: 图片路径
      */
     func createImageCompletyNameWithType(type:ImageType)->String {
-        let imageName = imagesDirectoryInCaches.stringByAppendingString("/\(createUniqueString())")
+        let imageName = caches + "/images" + "/\(createUniqueString())"
+        print(imageName)
         switch type {
         case .png:
             return imageName + ".png"

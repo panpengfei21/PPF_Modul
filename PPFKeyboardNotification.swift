@@ -48,11 +48,13 @@ class PPFKeyboardNotification: NSObject {
     // MARK: 数据处理
     ///加观察器
     func addObserver(){
+        isKeyboardShow = false
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(PPFKeyboardNotification.keyboardWillShow(_:)), name: UIKeyboardWillShowNotification, object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(PPFKeyboardNotification.keyboardWillHide(_:)), name: UIKeyboardWillHideNotification, object: nil)
     }
     /// 去除观察器
     func removeObserver(){
+        isKeyboardShow = false
         NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillShowNotification, object: nil)
         NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillHideNotification, object: nil)
     }
