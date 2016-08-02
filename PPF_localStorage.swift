@@ -111,6 +111,9 @@ extension PPF_localStorage{
             return false
         }
         let fullPath = path.stringByAppendingString("/\(name)")
+        if folderExistsAtPath(fullPath){
+            return true
+        }
         do{
             try fileManager.createDirectoryAtPath(fullPath, withIntermediateDirectories: true, attributes: nil)
             return true
@@ -228,7 +231,6 @@ extension PPF_localStorage{
         case .png:
             imageData = UIImagePNGRepresentation(image)
         case .jpg:
-            
             imageData = UIImageJPEGRepresentation(image, 0.5)
         }
         guard let imageD = imageData else{
@@ -241,16 +243,24 @@ extension PPF_localStorage{
         return imageD.writeToFile(path, atomically: true)
     }
     
+    
     /**
-     生成完整的图片名称(路径),保存在/Library/caches/images里
+     生成图片名称,在根名字下的images文件夹
      
-     - parameter type: 图片类型
+     - author: 潘 鹏飞
+     - date: 16-08-02 17:08:31
      
-     - returns: 图片路径
+     - parameter rootPath: 根名字
+     - parameter type:     图片类型
+     
+     - returns: 返回完整图片路径
      */
-    func createImageCompletyNameWithType(type:ImageType)->String {
-        let imageName = caches + "/images" + "/\(createUniqueString())"
-        print(imageName)
+    func createImageComletyNameInRootPath(rootPath:String,type:ImageType) -> String{
+        
+        guard createFolderWithPath(rootPath, withName: "images") else{
+            fatalError("创建文件夹不成功")
+        }
+        let imageName = rootPath + "/images" + "/\(createUniqueString())"
         switch type {
         case .png:
             return imageName + ".png"
@@ -260,6 +270,18 @@ extension PPF_localStorage{
     }
 }
 
+extension PPF_localStorage{
+    /**
+     生成完整的图片名称(路径),保存在/Library/caches/images里
+     
+     - parameter type: 图片类型
+     
+     - returns: 图片路径
+     */
+    func createImageCompletyNameWithType(type:ImageType)->String {
+        return createImageComletyNameInRootPath(caches, type: type)
+    }
+}
 
 
 
