@@ -8,7 +8,7 @@
 
 import UIKit
 
-@objc protocol PPFKeyboardNotification_delegate{
+protocol PPFKeyboardNotification_delegate:class{
     /**
      键盘将要出现
      
@@ -38,7 +38,7 @@ class PPFKeyboardNotification: NSObject {
     ///键盘是否正在显示. true:显示   false:隐藏
     var isKeyboardShow = false
     ///代理
-    var delegate:PPFKeyboardNotification_delegate?
+    weak var delegate:PPFKeyboardNotification_delegate?
     
     // MARK: life cycle
     private override init() {
