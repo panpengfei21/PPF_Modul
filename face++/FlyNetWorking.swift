@@ -2,7 +2,7 @@
 //  FlyNetWorking.swift
 //  HumanFaceRecognition
 //
-//  Created by Liuming Qiu on 2017/3/30.
+//  Created 潘鹏飞 on 2017/3/30.
 //  Copyright © 2017年 ZW. All rights reserved.
 //
 
