@@ -55,7 +55,7 @@ class PPFKeyboardNotification: NSObject {
         NotificationCenter.default.removeObserver(self, name: NSNotification.Name.UIKeyboardWillHide, object: nil)
     }
     
-    func keyboardWillShow(noti:NSNotification){
+    @objc func keyboardWillShow(noti:NSNotification){
         //取keyboard的frame
         if let kbFrame = noti.userInfo?[UIKeyboardFrameEndUserInfoKey] as? CGRect{
             //keyboard 的动画时间
@@ -68,7 +68,7 @@ class PPFKeyboardNotification: NSObject {
         }
     }
     
-    func keyboardWillHide(noti:NSNotification){
+    @objc func keyboardWillHide(noti:NSNotification){
         //取keyboard的frame
         if let kbFrame = noti.userInfo?[UIKeyboardFrameEndUserInfoKey] as? CGRect{
             //keyboard 的动画时间

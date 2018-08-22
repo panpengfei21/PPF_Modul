@@ -12,46 +12,6 @@ import MobileCoreServices
 // MARK:UIImagePickerControllerDelegate
 
 //UINavigationControllerDelegate,UIImagePickerControllerDelegate
-var picker = UIImagePickerController()
-//这里能否拍照,如果可以选择类型
-func cameraCanBeUsed(inout ipc:UIImagePickerController,mediaType:CFString,sourceType:UIImagePickerControllerSourceType) -> Bool{
-    if UIImagePickerController.isSourceTypeAvailable(UIImagePickerControllerSourceType.Camera) || UIImagePickerController.isSourceTypeAvailable(UIImagePickerControllerSourceType.PhotoLibrary){
-        if let availableTypes = UIImagePickerController.availableMediaTypesForSourceType(.Camera){
-            if (availableTypes as NSArray).containsObject(mediaType){
-                ipc.sourceType = sourceType
-                ipc.delegate = self
-                ipc.mediaTypes = [mediaType]
-                ipc.allowsEditing = true
-                ipc.videoQuality = UIImagePickerControllerQualityType.TypeMedium
-                return true
-            }
-        }
-    }
-    return false
-}
-
-
-//点击退出
-func imagePickerControllerDidCancel(picker: UIImagePickerController) {
-    presentedViewController?.dismissViewControllerAnimated(true, completion: nil)
-}
-//在这里获取照片
-func imagePickerController(picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : AnyObject]) {
-    //        UIImagePickerControllerMediaType              kUTTypeImage or kUTTypeMovie
-    //        UIImagePickerControllerOriginalImage          UIImage
-    //        UIImagePickerControllerEditedImage            UIImage
-    //        UIImagePickerControllerCropRect               CGRect (in an NSValue)
-    //        UIImagePickerControllerMediaMetadata          Dictionaryinfoabouttheimage
-    //        UIImagePickerControllerMediaURL               NSURL edited video
-    //        UIImagePickerControllerReferenceURL           NSURL original (unedited) video
-    if let editImage = info[UIImagePickerControllerEditedImage] as? UIImage{
-        //TODO:编辑过的照片
-    }else if let originImage = info[UIImagePickerControllerOriginalImage] as? UIImage{
-        //TODO:原照片
-    }
-    presentedViewController?.dismissViewControllerAnimated(true, completion: nil)
-}
-
 
 //示例
 //@IBAction func camera(sender: AnyObject) {
@@ -64,8 +24,13 @@ func imagePickerController(picker: UIImagePickerController, didFinishPickingMedi
 //    if cameraCanBeUsed(&picker, mediaType: kUTTypeImage, sourceType: UIImagePickerControllerSourceType.SavedPhotosAlbum){
 //        self.presentViewController(picker, animated: true, completion: nil)
 //    }
-//    
+//
 //}
+
+
+
+
+var picker = UIImagePickerController()
 
 // _________________以下swift 3.0__________________
 
@@ -109,4 +74,35 @@ func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMe
     presentedViewController?.dismiss(animated: true, completion: nil)
 }
 
+// _________________以下swift 4.0__________________
+
+//这里能否拍照,如果可以选择类型
+func cameraCanBeUsed( ipc:inout UIImagePickerController,mediaType:CFString,sourceType:UIImagePickerControllerSourceType) -> Bool{
+    if UIImagePickerController.isSourceTypeAvailable(UIImagePickerControllerSourceType.camera) || UIImagePickerController.isSourceTypeAvailable(UIImagePickerControllerSourceType.photoLibrary){
+        if let availableTypes = UIImagePickerController.availableMediaTypes(for: .camera){
+            if (availableTypes as NSArray).contains(mediaType){
+                ipc.sourceType = sourceType
+                ipc.delegate = self
+                ipc.mediaTypes = [mediaType as String]
+                ipc.allowsEditing = true
+                ipc.videoQuality = UIImagePickerControllerQualityType.typeMedium
+                return true
+            }
+        }
+    }
+    return false
+}
+
+//点击退出
+func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+    presentedViewController?.dismiss(animated: true, completion: nil)
+}
+func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
+    if let editImage = info[UIImagePickerControllerEditedImage] as? UIImage {
+        
+    }else if let originImage = info[UIImagePickerControllerOriginalImage] as? UIImage {
+        
+    }
+    presentedViewController?.dismiss(animated: true, completion: nil)
+}
 
